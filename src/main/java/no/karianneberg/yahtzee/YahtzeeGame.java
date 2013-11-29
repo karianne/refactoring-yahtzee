@@ -5,6 +5,7 @@ import java.util.*;
 public class YahtzeeGame {
     private final ThrowResultStrategy throwResultStrategy;
     private final Set<Combination> scoredCombinations;
+    private final Scorer scorer = new Scorer();
 
     private Throw currentThrow;
     private int currentScore;
@@ -52,67 +53,7 @@ public class YahtzeeGame {
 
         scoredCombinations.add(combo);
 
-        int score = 0;
-
-        switch (combo) {
-            case ONES:
-                score = scoreForNumberOfDiceWithValue(1);
-                break;
-            case TWOS:
-                score = scoreForNumberOfDiceWithValue(2);
-                break;
-            case THREES:
-                score = scoreForNumberOfDiceWithValue(3);
-                break;
-            case FOURS:
-                score = scoreForNumberOfDiceWithValue(4);
-                break;
-            case FIVES:
-                score = scoreForNumberOfDiceWithValue(5);
-                break;
-            case SIXES:
-                score = scoreForNumberOfDiceWithValue(6);
-                break;
-            case ONE_PAIR:
-                score = scoreForNumberOfAKind(2);
-                break;
-            case TWO_PAIRS:
-                TwoPairs result = currentThrow.findTwoPairs();
-                if (result == null) {
-                    score = 0;
-                } else {
-                    score =   (result.getFirst() * 2)
-                            + (result.getSecond() * 2);
-                }
-                break;
-            case THREE_OF_A_KIND:
-                score = scoreForNumberOfAKind(3);
-                break;
-            case FOUR_OF_A_KIND:
-                score = scoreForNumberOfAKind(4);
-                break;
-            case FULL_HOUSE:
-                FullHouse fullHouse = currentThrow.findFullHouse();
-                if (fullHouse == null) {
-                    score = 0;
-                } else {
-                    score =   (fullHouse.getFirst() * 2)
-                            + (fullHouse.getSecond() * 3);
-                }
-                break;
-            case SMALL_STRAIGHT:
-                score = currentThrow.isSmallStraight() ? 15 : 0;
-                break;
-            case LARGE_STRAIGHT:
-                score = currentThrow.isLargeStraight() ? 20 : 0;
-                break;
-            case CHANCE:
-                score = currentThrow.calculateSumOfDice();
-                break;
-            case YAHTZEE:
-                score = currentThrow.isYahtzee() ? 50 : 0;
-                break;
-        }
+        int score = scorer.score(combo, currentThrow);
 
         currentScore += score;
         currentRoundNumber++;
@@ -125,16 +66,6 @@ public class YahtzeeGame {
 
     private boolean noThrowsYetInThisRound() {
         return currentThrow == null;
-    }
-
-    private int scoreForNumberOfAKind(int numberOfAKind) {
-        int value = currentThrow.findNumberOfAKind(numberOfAKind);
-        return value * numberOfAKind;
-    }
-
-    private int scoreForNumberOfDiceWithValue(int value) {
-        int num = currentThrow.findNumberOfDiceWithValue(value);
-        return num * value;
     }
 
     public int finalScore() {
