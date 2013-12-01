@@ -1,6 +1,26 @@
 package no.karianneberg.yahtzee;
 
+import no.karianneberg.yahtzee.scoringStrategies.*;
+
 public class Scorer {
+
+    private final NumberOfAKindScoringStrategy onePairScoringStrategy = new NumberOfAKindScoringStrategy(2);
+    private final NumberOfAKindScoringStrategy threeOfAKindScoringStrategy = new NumberOfAKindScoringStrategy(3);
+    private final NumberOfAKindScoringStrategy fourOfAKindScoringStrategy = new NumberOfAKindScoringStrategy(4);
+    private final NumberOfDiceWithValueScoringStrategy onesScoringStrategy = new NumberOfDiceWithValueScoringStrategy(1);
+    private final NumberOfDiceWithValueScoringStrategy twosScoringStrategy = new NumberOfDiceWithValueScoringStrategy(2);
+    private final NumberOfDiceWithValueScoringStrategy threesScoringStrategy = new NumberOfDiceWithValueScoringStrategy(3);
+    private final NumberOfDiceWithValueScoringStrategy foursScoringStrategy = new NumberOfDiceWithValueScoringStrategy(4);
+    private final NumberOfDiceWithValueScoringStrategy fivesScoringStrategy = new NumberOfDiceWithValueScoringStrategy(5);
+    private final NumberOfDiceWithValueScoringStrategy sixesScoringStrategy = new NumberOfDiceWithValueScoringStrategy(6);
+    private final TwoPairsScoringStrategy twoPairsScoringStrategy = new TwoPairsScoringStrategy();
+    private final FullHouseScoringStrategy fullHouseScoringStrategy = new FullHouseScoringStrategy();
+    private final SmallStraightScoringStrategy smallStraightScoringStrategy = new SmallStraightScoringStrategy();
+    private final LargeStraightScoringStrategy largeStraightScoringStrategy = new LargeStraightScoringStrategy();
+    private final ChanceScoringStrategy chanceScoringStrategy = new ChanceScoringStrategy();
+    private final YahtzeeScoringStrategy yahtzeeScoringStrategy = new YahtzeeScoringStrategy();
+
+
     public Scorer() {
     }
 
@@ -9,73 +29,52 @@ public class Scorer {
 
         switch (combo) {
             case ONES:
-                score = scoreForNumberOfDiceWithValue(1, currentThrow);
+                score = onesScoringStrategy.scoreForNumberOfDiceWithValue(currentThrow);
                 break;
             case TWOS:
-                score = scoreForNumberOfDiceWithValue(2, currentThrow);
+                score = twosScoringStrategy.scoreForNumberOfDiceWithValue(currentThrow);
                 break;
             case THREES:
-                score = scoreForNumberOfDiceWithValue(3, currentThrow);
+                score = threesScoringStrategy.scoreForNumberOfDiceWithValue(currentThrow);
                 break;
             case FOURS:
-                score = scoreForNumberOfDiceWithValue(4, currentThrow);
+                score = foursScoringStrategy.scoreForNumberOfDiceWithValue(currentThrow);
                 break;
             case FIVES:
-                score = scoreForNumberOfDiceWithValue(5, currentThrow);
+                score = fivesScoringStrategy.scoreForNumberOfDiceWithValue(currentThrow);
                 break;
             case SIXES:
-                score = scoreForNumberOfDiceWithValue(6, currentThrow);
-                break;
-            case ONE_PAIR:
-                score = scoreForNumberOfAKind(2, currentThrow);
+                score = sixesScoringStrategy.scoreForNumberOfDiceWithValue(currentThrow);
                 break;
             case TWO_PAIRS:
-                TwoPairs result = currentThrow.findTwoPairs();
-                if (result == null) {
-                    score = 0;
-                } else {
-                    score = (result.getFirst() * 2)
-                            + (result.getSecond() * 2);
-                }
+                score = twoPairsScoringStrategy.score(currentThrow);
+            break;
+            case ONE_PAIR:
+                score = onePairScoringStrategy.scoreForNumberOfAKind(currentThrow);
                 break;
             case THREE_OF_A_KIND:
-                score = scoreForNumberOfAKind(3, currentThrow);
+                score = threeOfAKindScoringStrategy.scoreForNumberOfAKind(currentThrow);
                 break;
             case FOUR_OF_A_KIND:
-                score = scoreForNumberOfAKind(4, currentThrow);
+                score = fourOfAKindScoringStrategy.scoreForNumberOfAKind(currentThrow);
                 break;
             case FULL_HOUSE:
-                FullHouse fullHouse = currentThrow.findFullHouse();
-                if (fullHouse == null) {
-                    score = 0;
-                } else {
-                    score = (fullHouse.getFirst() * 2)
-                            + (fullHouse.getSecond() * 3);
-                }
+                score = fullHouseScoringStrategy.score(currentThrow);
                 break;
             case SMALL_STRAIGHT:
-                score = currentThrow.isSmallStraight() ? 15 : 0;
+                score = smallStraightScoringStrategy.score(currentThrow);
                 break;
             case LARGE_STRAIGHT:
-                score = currentThrow.isLargeStraight() ? 20 : 0;
+                score = largeStraightScoringStrategy.score(currentThrow);
                 break;
             case CHANCE:
-                score = currentThrow.calculateSumOfDice();
+                score = chanceScoringStrategy.score(currentThrow);
                 break;
             case YAHTZEE:
-                score = currentThrow.isYahtzee() ? 50 : 0;
+                score = yahtzeeScoringStrategy.score(currentThrow);
                 break;
         }
         return score;
     }
 
-    int scoreForNumberOfAKind(int numberOfAKind, Throw currentThrow) {
-        int value = currentThrow.findNumberOfAKind(numberOfAKind);
-        return value * numberOfAKind;
-    }
-
-    int scoreForNumberOfDiceWithValue(int value, Throw currentThrow) {
-        int num = currentThrow.findNumberOfDiceWithValue(value);
-        return num * value;
-    }
 }
