@@ -2,7 +2,7 @@ package no.karianneberg.yahtzee.scoringStrategies;
 
 import no.karianneberg.yahtzee.Throw;
 
-public class NumberOfAKindScoringStrategy {
+public class NumberOfAKindScoringStrategy implements ScoringStrategy {
 
     private int numberOfAKind;
 
@@ -10,7 +10,7 @@ public class NumberOfAKindScoringStrategy {
         this.numberOfAKind = numberOfAKind;
     }
 
-    public int scoreForNumberOfAKind(Throw currentThrow) {
+    public int score(Throw currentThrow) {
         int value = currentThrow.findNumberOfAKind(this.numberOfAKind);
         return value * this.numberOfAKind;
     }

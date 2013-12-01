@@ -9,7 +9,8 @@ import no.karianneberg.yahtzee.Throw;
  * Time: 1:05 AM
  * To change this template use File | Settings | File Templates.
  */
-public class YahtzeeScoringStrategy {
+public class YahtzeeScoringStrategy implements ScoringStrategy {
+    @Override
     public int score(Throw currentThrow) {
         int score;
         score = currentThrow.isYahtzee() ? 50 : 0;

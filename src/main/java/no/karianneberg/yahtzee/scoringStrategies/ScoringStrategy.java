@@ -6,13 +6,9 @@ import no.karianneberg.yahtzee.Throw;
  * Created with IntelliJ IDEA.
  * User: karianneberg
  * Date: 12/1/13
- * Time: 1:03 AM
+ * Time: 1:17 AM
  * To change this template use File | Settings | File Templates.
  */
-public class ChanceScoringStrategy implements ScoringStrategy {
-    public int score(Throw currentThrow) {
-        int score;
-        score = currentThrow.calculateSumOfDice();
-        return score;
-    }
+public interface ScoringStrategy {
+    int score(Throw currentThrow);
 }

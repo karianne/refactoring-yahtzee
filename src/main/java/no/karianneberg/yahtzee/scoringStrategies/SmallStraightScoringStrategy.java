@@ -9,7 +9,7 @@ import no.karianneberg.yahtzee.Throw;
  * Time: 12:58 AM
  * To change this template use File | Settings | File Templates.
  */
-public class SmallStraightScoringStrategy {
+public class SmallStraightScoringStrategy implements ScoringStrategy {
     public int score(Throw currentThrow) {
         int score;
         score = currentThrow.isSmallStraight() ? 15 : 0;

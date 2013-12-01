@@ -10,7 +10,7 @@ import no.karianneberg.yahtzee.Throw;
  * Time: 12:24 AM
  * To change this template use File | Settings | File Templates.
  */
-public class FullHouseScoringStrategy {
+public class FullHouseScoringStrategy implements ScoringStrategy {
     public int score(Throw currentThrow) {
         int score;FullHouse fullHouse = currentThrow.findFullHouse();
         if (fullHouse == null) {

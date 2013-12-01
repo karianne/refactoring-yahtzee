@@ -2,7 +2,7 @@ package no.karianneberg.yahtzee.scoringStrategies;
 
 import no.karianneberg.yahtzee.Throw;
 
-public class NumberOfDiceWithValueScoringStrategy {
+public class NumberOfDiceWithValueScoringStrategy implements ScoringStrategy {
 
     private int value;
 
@@ -10,7 +10,7 @@ public class NumberOfDiceWithValueScoringStrategy {
         this.value = value;
     }
 
-    public int scoreForNumberOfDiceWithValue(Throw currentThrow) {
+    public int score(Throw currentThrow) {
         int num = currentThrow.findNumberOfDiceWithValue(this.value);
         return num * this.value;
     }
