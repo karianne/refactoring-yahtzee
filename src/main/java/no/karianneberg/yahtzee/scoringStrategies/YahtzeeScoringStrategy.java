@@ -2,6 +2,8 @@ package no.karianneberg.yahtzee.scoringStrategies;
 
 import no.karianneberg.yahtzee.Throw;
 
+import java.util.Collections;
+
 /**
  * Created with IntelliJ IDEA.
  * User: karianneberg
@@ -13,7 +15,8 @@ public class YahtzeeScoringStrategy implements ScoringStrategy {
     @Override
     public int score(Throw currentThrow) {
         int score;
-        score = currentThrow.isYahtzee() ? 50 : 0;
+        Collections.sort(currentThrow.getDice());
+        score = currentThrow.getDice().get(0).equals(currentThrow.getDice().get(4)) ? 50 : 0;
         return score;
     }
 }

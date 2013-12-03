@@ -12,7 +12,11 @@ import no.karianneberg.yahtzee.Throw;
 public class ChanceScoringStrategy implements ScoringStrategy {
     public int score(Throw currentThrow) {
         int score;
-        score = currentThrow.calculateSumOfDice();
+        int sum = 0;
+        for (Integer integer : currentThrow.getDice()) {
+            sum += integer;
+        }
+        score = sum;
         return score;
     }
 }
