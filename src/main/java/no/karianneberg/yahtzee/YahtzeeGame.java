@@ -7,37 +7,41 @@ public class YahtzeeGame {
     private final Set<Combination> scoredCombinations;
     private final Scorer scorer = new Scorer();
 
-    private Throw currentThrow;
     private int currentScore;
-    private int currentRoundNumber;
-    private List<Integer> currentlyHeldDice;
-    private int currentNumberOfThrowsInThisRound = 0;
+    private Round currentRound;
+    private Queue<Round> remainingRounds = new LinkedList<Round>();
 
     public static final int NUMBER_OF_ROUNDS = Combination.values().length;
     private static final int MAX_NUMBER_OF_THROWS_PER_ROUND = 3;
 
     public YahtzeeGame(ThrowResultStrategy throwResultStrategy) {
+
+        for (int roundNumber = 1; roundNumber <= NUMBER_OF_ROUNDS; roundNumber++) {
+            remainingRounds.add(new Round(roundNumber));
+        }
+
+        currentRound = remainingRounds.peek();
+
         this.throwResultStrategy = throwResultStrategy;
-        this.currentlyHeldDice = new ArrayList<Integer>();
-        this.currentRoundNumber = 1;
         this.scoredCombinations = new HashSet<Combination>();
     }
 
     public void throwDice() {
-        if (currentNumberOfThrowsInThisRound >= MAX_NUMBER_OF_THROWS_PER_ROUND) {
+        if (currentRound.getCurrentNumberOfThrows() >= MAX_NUMBER_OF_THROWS_PER_ROUND) {
             throw new YahtzeeException("You cannot throw the dice more than "
                     + MAX_NUMBER_OF_THROWS_PER_ROUND + " times per round!");
         }
 
         Throw newThrow = throwResultStrategy.throwDice();
-        currentThrow = currentlyHeldDice.isEmpty()
+        Throw currentThrow = currentRound.getCurrentlyHeldDice().isEmpty()
                            ? newThrow
-                           : currentThrow.mergeWith(newThrow, currentlyHeldDice);
-        currentNumberOfThrowsInThisRound++;
+                           : currentRound.getCurrentThrow().mergeWith(newThrow, currentRound.getCurrentlyHeldDice());
+        currentRound.setCurrentThrow(currentThrow);
+        currentRound.incrementNumberOfThrows();
     }
 
     public void holdDice(Integer... positions) {
-        this.currentlyHeldDice = Arrays.asList(positions);
+        currentRound.setCurrentlyHeldDice(Arrays.asList(positions));
     }
 
     public int scoreFor(Combination combo) {
@@ -53,19 +57,18 @@ public class YahtzeeGame {
 
         scoredCombinations.add(combo);
 
-        int score = scorer.score(combo, currentThrow);
+        int score = scorer.score(combo, currentRound.getCurrentThrow());
 
         currentScore += score;
-        currentRoundNumber++;
-        currentNumberOfThrowsInThisRound = 0;
-        currentlyHeldDice = new ArrayList<Integer>();
-        currentThrow = null;
+
+        remainingRounds.poll();
+        currentRound = remainingRounds.peek();
 
         return score;
     }
 
     private boolean noThrowsYetInThisRound() {
-        return currentThrow == null;
+        return currentRound.getCurrentThrow() == null;
     }
 
     public int finalScore() {
@@ -73,15 +76,15 @@ public class YahtzeeGame {
     }
 
     public Map<Integer, Integer> getCurrentThrowAsMap() {
-        return currentThrow.asMap();
+        return currentRound.getCurrentThrow().asMap();
     }
 
     public boolean isOver() {
-        return currentRoundNumber > NUMBER_OF_ROUNDS;
+        return remainingRounds.isEmpty();
     }
 
     public int getCurrentRoundNumber() {
-        return currentRoundNumber;
+        return currentRound.getRoundNumber();
     }
 
     public Set<Combination> getRemainingCombos() {
@@ -91,4 +94,5 @@ public class YahtzeeGame {
 
         return new HashSet<Combination>(allCombos);
     }
+
 }
