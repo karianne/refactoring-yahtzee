@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Round {
+
+    static final int MAX_NUMBER_OF_THROWS_PER_ROUND = 3;
     private final int roundNumber;
     private Throw currentThrow;
     private List<Integer> currentlyHeldDice;
     private int currentNumberOfThrows = 0;
+    private ThrowResultStrategy throwResultStrategy;
 
-    public Round(int roundNumber) {
+    public Round(int roundNumber, ThrowResultStrategy throwResultStrategy) {
         this.roundNumber = roundNumber;
+        this.throwResultStrategy = throwResultStrategy;
         this.currentlyHeldDice = new ArrayList<Integer>();
     }
 
@@ -40,5 +44,13 @@ public class Round {
 
     public void incrementNumberOfThrows() {
         this.currentNumberOfThrows++;
+    }
+
+    public ThrowResultStrategy getThrowResultStrategy() {
+        return throwResultStrategy;
+    }
+
+    public void setThrowResultStrategy(ThrowResultStrategy throwResultStrategy) {
+        this.throwResultStrategy = throwResultStrategy;
     }
 }
