@@ -50,7 +50,4 @@ public class Round {
         return throwResultStrategy;
     }
 
-    public void setThrowResultStrategy(ThrowResultStrategy throwResultStrategy) {
-        this.throwResultStrategy = throwResultStrategy;
-    }
 }
